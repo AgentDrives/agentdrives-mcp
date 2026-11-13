@@ -1,0 +1,53 @@
+name: Sync skill
+
+# skills/check-agent-access/SKILL.md mirrors the copy agentdrives.com publishes.
+# The published file is checked against the sha256 digest in the site's skill
+# index before it replaces the copy here, so a partial or wrong download fails
+# the run instead of landing.
+
+on:
+  schedule:
+    - cron: "17 5 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-skill
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch the published skill
+        run: |
+          set -euo pipefail
+          base="https://agentdrives.com/.well-known/agent-skills"
+          curl -fsSL --retry 3 --retry-delay 10 -o /tmp/index.json "$base/index.json"
+          digest=$(jq -er '.skills[] | select(.name == "check-agent-access") | .digest' /tmp/index.json)
+          curl -fsSL --retry 3 --retry-delay 10 -o /tmp/SKILL.md "$base/check-agent-access/SKILL.md"
+          got="sha256:$(sha256sum /tmp/SKILL.md | cut -d' ' -f1)"
+          if [ "$got" != "$digest" ]; then
+            echo "::error::Published SKILL.md ($got) does not match the index digest ($digest)"
+            exit 1
+          fi
+          head -1 /tmp/SKILL.md | grep -qx -- '---' || { echo "::error::Published SKILL.md has no front matter"; exit 1; }
+
+      - name: Commit when it changed
+        run: |
+          set -euo pipefail
+          target=skills/check-agent-access/SKILL.md
+          if cmp -s /tmp/SKILL.md "$target"; then
+            echo "Skill unchanged."
+            exit 0
+          fi
+          cp /tmp/SKILL.md "$target"
+          git config user.name "AgentDrives"
+          git config user.email "hello@agentdrives.com"
+          git add "$target"
+          git commit -m "Sync check-agent-access skill from agentdrives.com"
+          git push

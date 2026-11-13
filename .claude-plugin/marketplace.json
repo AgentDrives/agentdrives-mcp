@@ -1,0 +1,19 @@
+{
+  "name": "agentdrives",
+  "owner": {
+    "name": "AgentDrives",
+    "email": "hello@agentdrives.com"
+  },
+  "metadata": {
+    "description": "AgentDrives for Claude Code: the MCP server and the check-agent-access skill."
+  },
+  "plugins": [
+    {
+      "name": "agentdrives",
+      "source": "./",
+      "description": "Look up a SaaS tool, API or provider before your agent picks it: its agent level (0-5), where our agent stopped, and whether an agent can sign up, get a key and pay on its own.",
+      "category": "development",
+      "homepage": "https://agentdrives.com"
+    }
+  ]
+}
