@@ -2,7 +2,7 @@
 
 Look up a SaaS tool, API or provider before your agent picks it. AgentDrives drives real products the way an agent would: it signs up, gets a key, does the work, tries to pay and leaves. For each product the record shows its agent level (L0 to L5), where our agent stopped and whether an agent can sign up, get a key and pay on its own.
 
-This repository packages the AgentDrives MCP server and the `check-agent-access` skill for Claude Code, Cursor, Gemini CLI and any agent that reads Agent Skills.
+This repository packages the AgentDrives MCP server and the `check-agent-access` skill for Claude Code, Codex, Cursor, Gemini CLI and any agent that reads Agent Skills.
 
 ## MCP server
 
@@ -80,10 +80,16 @@ npx skills add AgentDrives/agentdrives-mcp
 
 ## What's here
 
+- `plugin.json` and `mcp.json`: the plugin in the shared Agent Plugins format
 - `.claude-plugin/` and `.mcp.json`: the Claude Code plugin and its marketplace entry
-- `.cursor-plugin/` and `mcp.json`: the Cursor plugin
+- `.codex-plugin/`: the Codex plugin
+- `.cursor-plugin/`: the Cursor plugin
 - `gemini-extension.json`: the Gemini CLI extension
 - `skills/check-agent-access/SKILL.md`: the skill, the same file agentdrives.com publishes at `/.well-known/agent-skills/check-agent-access/SKILL.md`. A daily workflow keeps the copy here in step.
+
+## Security
+
+See [SECURITY.md](SECURITY.md).
 
 ## Licence
 
